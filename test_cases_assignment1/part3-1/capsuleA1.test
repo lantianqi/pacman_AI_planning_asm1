@@ -1,0 +1,16 @@
+class: "CapsuleTest"
+searchProblemClass: "CapsuleSearchProblem"
+heuristic: "capsuleProblemHeuristic"
+algorithm: "astar"
+
+layoutName: "capsuleA1"
+layout: """
+%%%%%%%%%%%%%
+%.  oooo%  .%
+% % oooo  % %
+%P         .%
+%%%%%%%%%%%%%
+"""
+basePoints: "0"
+indicativePoints: "1"
+gradingThresholds: "704 908 2980 4687"

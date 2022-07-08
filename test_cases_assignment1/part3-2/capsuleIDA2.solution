@@ -1,0 +1,6 @@
+# This is the solution file for test_cases/q5/corner_tiny_corner.test.
+solution_length: "11"
+
+solution: """
+West North North West West West South South South East East East East East East North
+"""

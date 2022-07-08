@@ -1,0 +1,18 @@
+class: "CapsuleTest"
+searchProblemClass: "CapsuleAvoidSearchProblem"
+heuristic: "capsuleAvoidProblemHeuristic"
+algorithm: "ida"
+
+layoutName: "capsuleAvoidIDA1"
+layout: """
+%%%%%%%%%%%
+%   . %   %
+% %%%.%   %
+% ooooo   %
+% %%%oo%% %
+%Poooooo. %
+%%%%%%%%%%%
+"""
+basePoints: "0"
+indicativePoints: "1"
+gradingThresholds: "414 7300 120317 673472"
