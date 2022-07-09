@@ -572,17 +572,21 @@ class CapsuleSearchProblem:
         
         # If you have anything else want to initialize
         "*** YOUR CODE HERE for Task 3 (optional) ***"
+        self.costFn = lambda x: 1
 
     def getStartState(self):
         # You MUST implement this function to return the initial state
         "*** YOUR CODE HERE for Task 3 ***"
-        return ()
+        return (self.init_pos, self.foodGrid.deepCopy(), self.capsulesGrid.deepCopy())
 
     def isGoalState(self, state):
         # You MUST implement this function to return True or False
         # to indicate whether the give state is one of the goal state or not
         "*** YOUR CODE HERE for Task 3 ***"
-        return True
+        pacman_pos, food_grid, capsules_grid = state
+        # if food_grid.count() == 0:
+        #     print("food count == 0")
+        return food_grid.count() == 0
 
     def getSuccessors(self, state):
         "Returns successor states, the actions they require, and a cost of ?."
@@ -592,10 +596,28 @@ class CapsuleSearchProblem:
         self._expanded += 1 # DO NOT CHANGE
         
         "*** YOUR CODE HERE for Task 3 ***"
+        pacman_pos, food_grid, capsules_grid = state
+        x, y = pacman_pos
         
         # There are four actions might be available
         for direction in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             dx, dy = Actions.directionToVector(direction)
+            next_x, next_y = int(x + dx), int(y + dy)
+
+            if not self.walls[next_x][next_y]:
+                new_pacman_pos = (next_x, next_y)
+                new_food_grid = food_grid.deepCopy()
+                new_capsules_grid = capsules_grid.deepCopy()
+                if food_grid[next_x][next_y]:
+                    new_food_grid = food_grid.deepCopy()
+                    new_food_grid[next_x][next_y] = False
+                cost = self.costFn(new_pacman_pos)
+                if capsules_grid[next_x][next_y]:
+                    new_capsules_grid = capsules_grid.deepCopy()
+                    new_capsules_grid[next_x][next_y] = False
+                    cost = 0
+                new_state = (new_pacman_pos, new_food_grid, new_capsules_grid)
+                successors.append( ( new_state, direction, cost) )
             
         return successors
 

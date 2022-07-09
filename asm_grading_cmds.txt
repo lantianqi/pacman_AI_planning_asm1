@@ -1,2 +1,6 @@
 python autograder.py --test-directory=test_cases_assignment1
 
+python autograder.py --test-directory=test_cases_assignment1/part3-1 -p -t test_cases_assignment1/part3-1/capsuleA1
+
+python autograder.py -p -t test_cases_assignment1/part3-1/capsuleA1
+
