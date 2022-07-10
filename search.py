@@ -164,6 +164,9 @@ def enforcedHillClimbing(problem, heuristic=nullHeuristic):
     It will be pass to this function as second argument (heuristic).
     """
     "*** YOUR CODE HERE FOR TASK 1 ***"
+    # print("Start:", problem.getStartState())
+    # print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
+    # # print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     node_0 = (problem.getStartState(), [])
 
     while True:
