@@ -34,10 +34,12 @@ description for details.
 Good luck and happy searching!
 """
 
+from xml.sax.handler import property_lexical_handler
 from game import Directions
 from game import Agent
 from game import Actions
 from game import Grid
+from searchAgents_hints import cPH1, cPH2, cPH3
 import util
 import time
 import search
@@ -455,7 +457,18 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    return 0
+    # return 0
+    x, y = position
+    food_list = foodGrid.asList()
+    h = 0
+    # goal aware
+    if len(food_list) == 0:
+        return h
+    for food in food_list:
+        h = max(mazeDistance(position, food, problem.startingGameState), h)
+
+    return h
+    # return 0
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
@@ -573,6 +586,9 @@ class CapsuleSearchProblem:
         # If you have anything else want to initialize
         "*** YOUR CODE HERE for Task 3 (optional) ***"
         self.costFn = lambda x: 1
+        self.startingGameState = startingGameState
+        self.currentGameState = startingGameState
+        self.heuristicInfo = {}
 
     def getStartState(self):
         # You MUST implement this function to return the initial state
@@ -609,11 +625,9 @@ class CapsuleSearchProblem:
                 new_food_grid = food_grid.deepCopy()
                 new_capsules_grid = capsules_grid.deepCopy()
                 if food_grid[next_x][next_y]:
-                    new_food_grid = food_grid.deepCopy()
                     new_food_grid[next_x][next_y] = False
                 cost = self.costFn(new_pacman_pos)
                 if capsules_grid[next_x][next_y]:
-                    new_capsules_grid = capsules_grid.deepCopy()
                     new_capsules_grid[next_x][next_y] = False
                     cost = 0
                 new_state = (new_pacman_pos, new_food_grid, new_capsules_grid)
@@ -622,7 +636,6 @@ class CapsuleSearchProblem:
         return successors
 
 
-    
     def getCostOfActions(self, actions):
         """Returns the cost of a particular sequence of actions.  If those actions
         include an illegal move, return 999999"""
@@ -630,11 +643,18 @@ class CapsuleSearchProblem:
         # this function will return the cost only for display purpose when you run your own test.
         "*** YOUR CODE HERE for Task 3 (optional) ***"
         cost = 0
-
+        x,y = self.init_pos
+        capsule = self.capsulesGrid.copy()
+        print(actions)
         for action in actions:
             # figure out the next state and see whether it's legal
             dx, dy = Actions.directionToVector(action)
-
+            x, y = int(x + dx), int(y + dy)
+            if self.walls[x][y]:
+                return 999999
+            elif capsule[x][y]:
+                capsule[x][y]=False
+            else: cost += 1
         return cost
 
 def capsuleProblemHeuristic(state, problem):
@@ -642,8 +662,47 @@ def capsuleProblemHeuristic(state, problem):
     Your heuristic for the CapsuleSearchProblem goes here.
     """
     "*** YOUR CODE HERE for Task 3 ***"
+    # pacman_pos, food_grid, capsules_grid = state
+
+    # h = 0
+    # # farthest_food = (999,999)
+    # # path_to_farthest_food = []
+    # path_to_farthest_food = []
+    # for food in food_grid.asList():
+    #     prob = PositionSearchProblem(problem.startingGameState, start=pacman_pos, goal=food, warn=False, visualize=False)
+    #     actions = search.bfs(prob)
+    #     # h += problem.getCostOfActions(actions)
+    #     # h += len(actions)
+    #     # h = max(h, len(actions))
+    #     if len(actions) > h:
+    #         h = len(actions)
+    #         path_to_farthest_food = actions
+    #         # path_to_farthest_food = actions
+    #         # farthest_food = food
     
-    return 0
+    # cells_on_path = [pacman_pos]
+    # x, y = pacman_pos
+    # for action in path_to_farthest_food:
+    #     dx, dy = Actions.directionToVector(action)
+    #     next_x, next_y = int(x+dx), int(y+dy)
+    #     cells_on_path += [(next_x, next_y)]
+    #     x, y = next_x, next_y
+
+    # capsule_count = 0
+    # for cell in cells_on_path:
+    #     cell_x, cell_y = cell
+    #     if capsules_grid[cell_x][cell_y]:
+    #         capsule_count += 1
+    
+    # h -= capsule_count
+    # return h
+    # return cPH2(state, problem)
+    if state in problem.heuristicInfo:
+        return problem.heuristicInfo[state]
+    else:
+        h = cPH3(state, problem)
+        problem.heuristicInfo[state] = h
+    return h
 
 
 class CapsuleAvoidSearchAgent(SearchAgent):
@@ -675,17 +734,29 @@ class CapsuleAvoidSearchProblem:
         
         # If you have anything else want to initialize
         "*** YOUR CODE HERE for Task 4 (optional) ***"
+        self.startingGameState = startingGameState
+
+        def capsuleAvoidCostFn(pacman_pos, capsules_grid):
+            x, y = pacman_pos
+            if capsules_grid[x][y]:
+                return 2
+            return 1
+
+
+        # self.costFn = capsuleAvoidCostFn
+        self.costFn = lambda x : 1
 
     def getStartState(self):
         # You MUST implement this function to return the initial state
         "*** YOUR CODE HERE for Task 4 ***"
-        return ()
+        return (self.init_pos, self.foodGrid.copy(), self.capsulesGrid.copy())
 
     def isGoalState(self, state):
         # You MUST implement this function to return True or False
         # to indicate whether the give state is one of the goal state or not
         "*** YOUR CODE HERE for Task 4 ***"
-        return True
+        pacman_pos, food_grid, capsules_grid = state
+        return food_grid.count() == 0
 
     def getSuccessors(self, state):
         "Returns successor states, the actions they require, and a cost of ?."
@@ -695,15 +766,32 @@ class CapsuleAvoidSearchProblem:
         self._expanded += 1 # DO NOT CHANGE
         
         "*** YOUR CODE HERE for Task 4 ***"
+        pacman_pos, food_grid, capsules_grid = state
+        x, y = pacman_pos
         
         # There are four actions might be available
         for direction in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             dx, dy = Actions.directionToVector(direction)
+            next_x, next_y = int(x+dx), int(y+dy)
+
+            if not self.walls[next_x][next_y]:
+                new_pacman_pos = (next_x, next_y)
+                new_food_grid = food_grid.deepCopy()
+                new_capsules_grid = capsules_grid.deepCopy()
+                if food_grid[next_x][next_y]:
+                    new_food_grid[next_x][next_y] = False
+                # cost = self.costFn(new_pacman_pos, new_capsules_grid)
+                cost = self.costFn(new_pacman_pos)
+
+                if capsules_grid[next_x][next_y]:
+                    new_capsules_grid[next_x][next_y] = False
+                    cost = 2
+                new_state = (new_pacman_pos, new_food_grid, new_capsules_grid)
+                successors.append( ( new_state, direction, cost) )
             
         return successors
 
 
-    
     def getCostOfActions(self, actions):
         """Returns the cost of a particular sequence of actions.  If those actions
         include an illegal move, return 999999"""
@@ -711,17 +799,31 @@ class CapsuleAvoidSearchProblem:
         # this function will return the cost only for display purpose when you run your own test.
         "*** YOUR CODE HERE for Task 4 (optional) ***"
         cost = 0
+        x, y = self.init_pos
+        capsules = self.capsulesGrid.copy()
 
         for action in actions:
             # figure out the next state and see whether it's legal
             dx, dy = Actions.directionToVector(action)
+            x, y = int(x+dx), int(y+dy)
+            if self.walls[x][y]:
+                return 999999
+            elif capsules[x][y]:
+                capsules[x][y] = False
+                cost += 2
+            else:
+                cost += 1
 
         return cost
 
+
 def capsuleAvoidProblemHeuristic(state, problem):
-    """
-    Your heuristic for the CapsuleSearchProblem goes here.
-    """
-    "*** YOUR CODE HERE for Task 4 ***"
-    
-    return 0
+    # return 0
+    pacman_pos, food_grid, capsules_grid = state
+    startingGameState = problem.startingGameState
+    # return food_grid.count()
+    max_dist = 0
+    for food in food_grid.asList():
+        food_dist = mazeDistance(pacman_pos, food, startingGameState)
+        max_dist = max(food_dist, max_dist)
+    return max_dist
