@@ -645,7 +645,7 @@ class CapsuleSearchProblem:
         cost = 0
         x,y = self.init_pos
         capsule = self.capsulesGrid.copy()
-        print(actions)
+        # print(actions)
         for action in actions:
             # figure out the next state and see whether it's legal
             dx, dy = Actions.directionToVector(action)
@@ -657,71 +657,71 @@ class CapsuleSearchProblem:
             else: cost += 1
         return cost
 
-def capsuleProblemHeuristic(state, problem):
-    # return 0
-    if state in problem.heuristicInfo:
-        return problem.heuristicInfo[state]
-    pacman_pos, food_grid, capsules_grid = state
-    # print(state)
-    startingGameState = problem.startingGameState
-    # return food_grid.count()
-    max_dist = 0
-    for food in food_grid.asList():
-        # food_dist = mazeDistance(pacman_pos, food, startingGameState)
-        food_dist = mazeDistance3(pacman_pos, food, startingGameState, problem)
-        max_dist = max(food_dist, max_dist)
-
-    # print(max(max_dist, food_grid.count()))
-    problem.heuristicInfo[state] = max(max_dist, food_grid.count())
-    return max(max_dist, food_grid.count())
-
-
 # def capsuleProblemHeuristic(state, problem):
-#     """
-#     Your heuristic for the CapsuleSearchProblem goes here.
-#     """
-#     "*** YOUR CODE HERE for Task 3 ***"
-#     # pacman_pos, food_grid, capsules_grid = state
-
-#     # h = 0
-#     # # farthest_food = (999,999)
-#     # # path_to_farthest_food = []
-#     # path_to_farthest_food = []
-#     # for food in food_grid.asList():
-#     #     prob = PositionSearchProblem(problem.startingGameState, start=pacman_pos, goal=food, warn=False, visualize=False)
-#     #     actions = search.bfs(prob)
-#     #     # h += problem.getCostOfActions(actions)
-#     #     # h += len(actions)
-#     #     # h = max(h, len(actions))
-#     #     if len(actions) > h:
-#     #         h = len(actions)
-#     #         path_to_farthest_food = actions
-#     #         # path_to_farthest_food = actions
-#     #         # farthest_food = food
-
-#     # cells_on_path = [pacman_pos]
-#     # x, y = pacman_pos
-#     # for action in path_to_farthest_food:
-#     #     dx, dy = Actions.directionToVector(action)
-#     #     next_x, next_y = int(x+dx), int(y+dy)
-#     #     cells_on_path += [(next_x, next_y)]
-#     #     x, y = next_x, next_y
-
-#     # capsule_count = 0
-#     # for cell in cells_on_path:
-#     #     cell_x, cell_y = cell
-#     #     if capsules_grid[cell_x][cell_y]:
-#     #         capsule_count += 1
-
-#     # h -= capsule_count
-#     # return h
-#     # return cPH2(state, problem)
+#     # return 0
 #     if state in problem.heuristicInfo:
 #         return problem.heuristicInfo[state]
-#     else:
-#         h = cPH3(state, problem)
-#         problem.heuristicInfo[state] = h
-#     return h
+#     pacman_pos, food_grid, capsules_grid = state
+#     # print(state)
+#     startingGameState = problem.startingGameState
+#     # return food_grid.count()
+#     max_dist = 0
+#     for food in food_grid.asList():
+#         # food_dist = mazeDistance(pacman_pos, food, startingGameState)
+#         food_dist = mazeDistance3(pacman_pos, food, startingGameState, problem)
+#         max_dist = max(food_dist, max_dist)
+
+#     # print(max(max_dist, food_grid.count()))
+#     problem.heuristicInfo[state] = max(max_dist, food_grid.count())
+#     return max(max_dist, food_grid.count())
+
+
+def capsuleProblemHeuristic(state, problem):
+    """
+    Your heuristic for the CapsuleSearchProblem goes here.
+    """
+    "*** YOUR CODE HERE for Task 3 ***"
+    # pacman_pos, food_grid, capsules_grid = state
+
+    # h = 0
+    # # farthest_food = (999,999)
+    # # path_to_farthest_food = []
+    # path_to_farthest_food = []
+    # for food in food_grid.asList():
+    #     prob = PositionSearchProblem(problem.startingGameState, start=pacman_pos, goal=food, warn=False, visualize=False)
+    #     actions = search.bfs(prob)
+    #     # h += problem.getCostOfActions(actions)
+    #     # h += len(actions)
+    #     # h = max(h, len(actions))
+    #     if len(actions) > h:
+    #         h = len(actions)
+    #         path_to_farthest_food = actions
+    #         # path_to_farthest_food = actions
+    #         # farthest_food = food
+
+    # cells_on_path = [pacman_pos]
+    # x, y = pacman_pos
+    # for action in path_to_farthest_food:
+    #     dx, dy = Actions.directionToVector(action)
+    #     next_x, next_y = int(x+dx), int(y+dy)
+    #     cells_on_path += [(next_x, next_y)]
+    #     x, y = next_x, next_y
+
+    # capsule_count = 0
+    # for cell in cells_on_path:
+    #     cell_x, cell_y = cell
+    #     if capsules_grid[cell_x][cell_y]:
+    #         capsule_count += 1
+
+    # h -= capsule_count
+    # return h
+    # return cPH2(state, problem)
+    if state in problem.heuristicInfo:
+        return problem.heuristicInfo[state]
+    else:
+        h = cPH3(state, problem)
+        problem.heuristicInfo[state] = h
+    return h
 
 
 class CapsuleAvoidSearchAgent(SearchAgent):
@@ -864,7 +864,7 @@ def mazeDistance2(point1, point2, gameState, problem):
     assert not walls[x2][y2], 'point2 is a wall: ' + str(point2)
     # prob = PositionSearchProblem(gameState, start=point1, goal=point2, warn=False, visualize=False)
     # prob = AnyFoodSearchProblem(gameState)
-    prob = capsulesPositionSearchProblem(gameState, costFn=avoidCapCostFn, start=point1, goal=point2, warn=False, visualize=False)
+    prob = AvoidCapsulesPositionSearchProblem(gameState, costFn=avoidCapCostFn, start=point1, goal=point2, warn=False, visualize=False)
     actions = uniformCostCapAvoidSearch(prob)
     # print(actions)
     # print(prob.getCostOfActions(actions))
@@ -879,9 +879,9 @@ def mazeDistance3(point1, point2, gameState, problem):
     assert not walls[x2][y2], 'point2 is a wall: ' + str(point2)
     # prob = PositionSearchProblem(gameState, start=point1, goal=point2, warn=False, visualize=False)
     # prob = AnyFoodSearchProblem(gameState)
-    prob = capsulesPositionSearchProblem(gameState, costFn=encourageCapCostFn, start=point1, goal=point2, warn=False, visualize=False)
+    prob = AvoidCapsulesPositionSearchProblem(gameState, costFn=encourageCapCostFn, start=point1, goal=point2, warn=False, visualize=False)
     actions = uniformCostCapAvoidSearch(prob)
-    actions = search.bfs(prob)
+    # actions = search.bfs(prob)
     # print(actions)
     # print(prob.getCostOfActions(actions))
     return prob.getCostOfActions(actions)
@@ -919,21 +919,54 @@ def uniformCostCapAvoidSearch(problem):
                     new_node = (new_state, action_list + [new_action], g_cost + step_cost)
                     pQueue.push(new_node, g_cost + step_cost)
 
-def encourageCapCostFn(state):
-    pacman_pos, capsules_grid = state
-    x, y = pacman_pos
-    if capsules_grid[x][y]:
+
+# def uniformCostCapAvoidSearch(problem):
+#     """Search the node of least total cost first."""
+#     "*** YOUR CODE HERE ***"
+#     # util.raiseNotDefined()
+#     """
+#     expansion check
+#     """
+#     pQueue = util.PriorityQueue()
+#     start_state = problem.getStartState()
+#     init_pos, capsules_grid = start_state
+#     x, y = init_pos
+#     # root_node has start_state, action_list [], and g_cost value 0
+#     root_node = (start_state, [], 0)
+#     # push root_node into pQueue, priority will be 0, which is the g_cost value
+#     pQueue.push(root_node, 0)
+#     # expanded = set()
+#     generated = set()
+#     generated.add(start_state)
+
+#     while not pQueue.isEmpty():
+#         node = pQueue.pop()
+#         state, action_list, g_cost = node
+#         pacman_pos, capsules_grid = state
+#         if problem.isGoalState(state):
+#             return action_list
+#         else:
+#             for succ in problem.getSuccessors(state):
+#                 new_state, new_action, step_cost = succ
+#                 if not new_state in generated:
+#                     new_node = (new_state, action_list + [new_action], g_cost + step_cost)
+#                     pQueue.push(new_node, g_cost + step_cost)
+#                     generated.add(new_state)
+
+
+def encourageCapCostFn(pos, eat_capsule):
+    x, y = pos
+    if eat_capsule:
         return 0
     return 1
 
-def avoidCapCostFn(state):
-    pacman_pos, capsules_grid = state
-    x, y = pacman_pos
-    if capsules_grid[x][y]:
+def avoidCapCostFn(pos, eat_capsule):
+    x, y = pos
+    if eat_capsule:
         return 2
     return 1
 
-class capsulesPositionSearchProblem(PositionSearchProblem):
+class AvoidCapsulesPositionSearchProblem(PositionSearchProblem):
     """
     A search problem for finding a path to a given food.
 
@@ -956,10 +989,7 @@ class capsulesPositionSearchProblem(PositionSearchProblem):
         self.goal = goal
         # Store info for the PositionSearchProblem (no need to change this)
         self.walls = gameState.getWalls()
-        self.capsulesGrid = gameState.getCapsules()
         self._visited, self._visitedlist, self._expanded = {}, [], 0 # DO NOT CHANGE
-
-        self._expanded = 0 # DO NOT CHANGE
 
         "You might need to use the following variables"
         self.walls = gameState.getWalls()
@@ -1011,8 +1041,13 @@ class capsulesPositionSearchProblem(PositionSearchProblem):
             dx, dy = Actions.directionToVector(action)
             next_x, next_y = int(x + dx), int(y + dy)
             if not self.walls[next_x][next_y]:
-                nextState = ((next_x, next_y), capsules_grid)
-                cost = self.costFn(nextState)
+                next_capsules_grid = capsules_grid.copy()
+                eat_capsule = capsules_grid[next_x][next_y]
+                if capsules_grid[next_x][next_y]:
+                    next_capsules_grid[next_x][next_y] = False
+                cost = self.costFn((next_x, next_y), eat_capsule)
+                nextState = ((next_x, next_y), next_capsules_grid)
+                # cost = self.costFn(nextState)
                 successors.append( ( nextState, action, cost) )
 
         # Bookkeeping for display purposes
@@ -1047,8 +1082,10 @@ class capsulesPositionSearchProblem(PositionSearchProblem):
             # else:
             #     cost += 1
             else:
-                next_state = ((x, y), capsules)
-                cost += self.costFn(next_state)
+                eat_capsule = capsules[x][y]
                 if capsules[x][y]:
                     capsules[x][y] = False
+                next_state = ((x, y), capsules)
+                cost += self.costFn(next_state, eat_capsule)
+                
         return cost

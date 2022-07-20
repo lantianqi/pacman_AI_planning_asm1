@@ -1,6 +1,12 @@
 python autograder.py --test-directory=test_cases_assignment1
+python autograder.py --test-directory=test_cases_assignment1 -p
 
 python autograder.py --test-directory=test_cases_assignment1/part3-1 -p -t test_cases_assignment1/part3-1/capsuleA1
 
 python autograder.py -p -t test_cases_assignment1/part3-1/capsuleA1
 
+python pacman.py -l ehc1 -p SearchAgent --frameTime=2 -a fn=ehc,heuristic=manhattanHeuristic
+
+python pacman.py -l capsuleA1.lay -p CapsuleSearchAgent -a fn=astar,heuristic=capsuleProblemHeuristic,prob=CapsuleSearchProblem
+
+python autograder.py --test-directory=test_cases_assignment1/part4-1 -p -t test_cases_assignment1/part4-1/capsuleAvoidA1
