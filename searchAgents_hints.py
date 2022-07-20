@@ -744,6 +744,32 @@ def CMD(init_state,target,problem):
                     myQ.push(nextNode)
     return 0
 
+
+# def CMD(init_state,target,problem):
+#     myQ = util.Queue()
+#     startNode = (init_state,[])
+#     myQ.push(startNode)
+#     # generated = set()
+#     # generated.add(init_state)
+#     expanded = set()
+#     while not myQ.isEmpty():
+#         node = myQ.pop()
+#         # if len(myQ.list)>5: print(len(myQ.list))
+#         state, state_list = node
+#         if state not in expanded:
+        
+#             expanded.add(state)
+#             if state[0]==target:
+#                 return len(state_list)
+#             else:
+#                 for next_state in set(expand(state,problem)):
+#                     pos,foods,capsules=next_state
+#                     # print(f"pos:{state[0]}; next: {pos}; capsules: {capsules.asList()}")
+#                     nextNode = (next_state,state_list+[next_state])
+#                     # generated.add(next_state)
+#                     myQ.push(nextNode)
+#     return 0
+
 def expand(state,problem):
     (x,y),foods,capsules = state
     successors = []
@@ -760,6 +786,7 @@ def expand(state,problem):
             else:
                 
                 successors.append( ( (next_x, next_y), next_foods,next_capsules) )
+    # print(successors)
     return successors
 
 

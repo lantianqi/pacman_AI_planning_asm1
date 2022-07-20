@@ -116,10 +116,37 @@ def breadthFirstSearch(problem):
 
     util.raiseNotDefined()
 
+
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # util.raiseNotDefined()
+
+    """
+    expansion check
+    """
+
+    pQueue = util.PriorityQueue()
+    start_state = problem.getStartState()
+    # root_node has start_state, action_list [], and g_cost value 0
+    root_node = (start_state, [], 0)
+    # push root_node into pQueue, priority will be 0, which is the g_cost value
+    pQueue.push(root_node, 0)
+    expanded = set()
+
+    while not pQueue.isEmpty():
+        node = pQueue.pop()
+        state, action_list, g_cost = node
+        if state not in expanded:
+            # expand
+            expanded.add(state)
+            if problem.isGoalState(state):
+                return action_list
+            else:
+                for succ in problem.getSuccessors(state):
+                    new_state, new_action, step_cost = succ
+                    new_node = (new_state, action_list + [new_action], g_cost + step_cost)
+                    pQueue.push(new_node, g_cost + step_cost)
 
 def nullHeuristic(state, problem=None):
     """
@@ -153,7 +180,14 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                 succState, succAction, succCost = succ
                 newNode = (succState, succAction, cost + succCost, path + [(node, action)])
                 myPQ.push(newNode,heuristic(succState,problem)+cost+succCost)
-    util.raiseNotDefined()
+                old_f = cost + heuristic(state, problem)
+                new_f = cost + succCost + heuristic(succState, problem)
+                if old_f > new_f + cost:
+                    print("$$$ inconsisitent $$$")
+                    print(old_f, new_f, cost)
+                    print(state[0], action, succState[0], problem.capsulesGrid[succState[0][0]][succState[0][1]])
+                    
+    # util.raiseNotDefined()
 
 
 def enforcedHillClimbing(problem, heuristic=nullHeuristic):
